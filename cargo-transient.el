@@ -39,6 +39,7 @@
   ["Commands"
    ("b" "Build" cargo-transient--build)
    ("c" "Check" cargo-transient--check)
+   ("d" "Doc" cargo-transient--doc)
    ("k" "Clean" cargo-transient--clean)
    ("l" "Clippy" cargo-transient--clippy)
    ("r" "Run" cargo-transient--run)
@@ -115,6 +116,31 @@
    (cargo-transient--arg-offline)]
   ["Actions"
    ("l" "Clippy" cargo-transient--exec)])
+
+(transient-define-prefix cargo-transient--doc ()
+  "Run `cargo doc'."
+  ["Documentation Options"
+   ("-O"
+    "Open the docs in a browser after builder them"
+    "--open")
+   ("-n"
+    "Do not build documentation for dependencies"
+    "--no-deps")
+   ("-p"
+    "Include non-public items in the documentation"
+    "--document-private-items")]
+  ["Target Selection"
+   (cargo-transient--arg-bin)
+   (cargo-transient--arg-bins)
+   (cargo-transient--arg-example)
+   (cargo-transient--arg-examples)
+   (cargo-transient--arg-lib)]
+  ["Compilation Options"
+   (cargo-transient--arg-release)]
+  ["Manifest Options"
+   (cargo-transient--arg-offline)]
+  ["Actions"
+   ("d" "Doc" cargo-transient--exec)])
 
 (transient-define-prefix cargo-transient--run ()
   "Run `cargo run`."
