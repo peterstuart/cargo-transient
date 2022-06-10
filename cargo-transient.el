@@ -34,6 +34,21 @@
 (require 'project)
 (require 'transient)
 
+;; Group Names
+
+(defvar cargo-transient--group-target-selection
+  "Target Selection")
+(defvar cargo-transient--group-feature-selection
+  "Feature Selection")
+(defvar cargo-transient--group-compilation-options
+  "Compilation Options")
+(defvar cargo-transient--group-manifest-options
+  "Manifest Options")
+(defvar cargo-transient--group-actions
+  "Actions")
+
+;; Transients
+
 (transient-define-prefix cargo-transient ()
   "Interact with `cargo' in a transient."
   ["Commands"
@@ -47,7 +62,7 @@
 
 (transient-define-prefix cargo-transient--build ()
   "Run `cargo build'."
-  ["Target Selection"
+  [cargo-transient--group-target-selection
    (cargo-transient--arg-bin)
    (cargo-transient--arg-bins)
    (cargo-transient--arg-example)
@@ -55,16 +70,20 @@
    (cargo-transient--arg-lib)
    (cargo-transient--arg-test)
    (cargo-transient--arg-tests)]
-  ["Compilation Options"
+  [cargo-transient--group-feature-selection
+   (cargo-transient--arg-features)
+   (cargo-transient--arg-all-features)
+   (cargo-transient--arg-no-default-features)]
+  [cargo-transient--group-compilation-options
    (cargo-transient--arg-release)]
-  ["Manifest Options"
+  [cargo-transient--group-manifest-options
    (cargo-transient--arg-offline)]
-  ["Actions"
+  [cargo-transient--group-actions
    ("b" "Build" cargo-transient--exec)])
 
 (transient-define-prefix cargo-transient--check ()
   "Run `cargo check'."
-  ["Target Selection"
+  [cargo-transient--group-target-selection
    (cargo-transient--arg-bin)
    (cargo-transient--arg-bins)
    (cargo-transient--arg-example)
@@ -72,37 +91,48 @@
    (cargo-transient--arg-lib)
    (cargo-transient--arg-test)
    (cargo-transient--arg-tests)]
-  ["Compilation Options"
+  [cargo-transient--group-feature-selection
+   (cargo-transient--arg-features)
+   (cargo-transient--arg-all-features)
+   (cargo-transient--arg-no-default-features)]
+  [cargo-transient--group-compilation-options
    (cargo-transient--arg-release)]
-  ["Manifest Options"
+  [cargo-transient--group-manifest-options
    (cargo-transient--arg-offline)]
-  ["Actions"
+  [cargo-transient--group-actions
    ("c" "Check" cargo-transient--exec)])
 
 (transient-define-prefix cargo-transient--clean ()
   "Run `cargo clean'."
-  ["Arguments"
+  ["Clean Options"
    (cargo-transient--arg-doc
-    :description "Just the documentation directory")
-   (cargo-transient--arg-offline)
+    :description "Just the documentation directory"
+    :key "-d")
    (cargo-transient--arg-release
-    :description "Release artifacts")]
-  ["Actions"
+    :description "Release artifacts"
+    :key "-r")]
+  [cargo-transient--group-manifest-options
+   (cargo-transient--arg-offline)]
+  [cargo-transient--group-actions
    ("k" "Clean" cargo-transient--exec)])
 
 (transient-define-prefix cargo-transient--clippy ()
   "Run `cargo clippy'."
   ["Clippy Options"
-   ("-f"
+   ("-a"
     "Automatically apply lint suggestions"
     "--fix")
-   ("-F"
+   ("-A"
     "Automatically apply lint suggestions, regardless of dirty or staged status"
     "--fix --allow-dirty --allow-staged")
    ("-n"
     "Run Clippy only on the given crate, without linting the dependencies"
     "--no-deps")]
-  ["Target Selection"
+  [cargo-transient--group-feature-selection
+   (cargo-transient--arg-features)
+   (cargo-transient--arg-all-features)
+   (cargo-transient--arg-no-default-features)]
+  [cargo-transient--group-target-selection
    (cargo-transient--arg-bin)
    (cargo-transient--arg-bins)
    (cargo-transient--arg-example)
@@ -110,17 +140,17 @@
    (cargo-transient--arg-lib)
    (cargo-transient--arg-test)
    (cargo-transient--arg-tests)]
-  ["Compilation Options"
+  [cargo-transient--group-compilation-options
    (cargo-transient--arg-release)]
-  ["Manifest Options"
+  [cargo-transient--group-manifest-options
    (cargo-transient--arg-offline)]
-  ["Actions"
+  [cargo-transient--group-actions
    ("l" "Clippy" cargo-transient--exec)])
 
 (transient-define-prefix cargo-transient--doc ()
   "Run `cargo doc'."
   ["Documentation Options"
-   ("-O"
+   ("-o"
     "Open the docs in a browser after builder them"
     "--open")
    ("-n"
@@ -129,29 +159,37 @@
    ("-p"
     "Include non-public items in the documentation"
     "--document-private-items")]
-  ["Target Selection"
+  [cargo-transient--group-target-selection
    (cargo-transient--arg-bin)
    (cargo-transient--arg-bins)
    (cargo-transient--arg-example)
    (cargo-transient--arg-examples)
    (cargo-transient--arg-lib)]
-  ["Compilation Options"
+  [cargo-transient--group-feature-selection
+   (cargo-transient--arg-features)
+   (cargo-transient--arg-all-features)
+   (cargo-transient--arg-no-default-features)]
+  [cargo-transient--group-compilation-options
    (cargo-transient--arg-release)]
-  ["Manifest Options"
+  [cargo-transient--group-manifest-options
    (cargo-transient--arg-offline)]
-  ["Actions"
+  [cargo-transient--group-actions
    ("d" "Doc" cargo-transient--exec)])
 
 (transient-define-prefix cargo-transient--run ()
   "Run `cargo run`."
-  ["Target Selection"
+  [cargo-transient--group-target-selection
    (cargo-transient--arg-bin)
    (cargo-transient--arg-example)]
-  ["Compilation Options"
+  [cargo-transient--group-feature-selection
+   (cargo-transient--arg-features)
+   (cargo-transient--arg-all-features)
+   (cargo-transient--arg-no-default-features)]
+  [cargo-transient--group-compilation-options
    (cargo-transient--arg-release)]
-  ["Manifest Options"
+  [cargo-transient--group-manifest-options
    (cargo-transient--arg-offline)]
-  ["Actions"
+  [cargo-transient--group-actions
    ("r" "Run" cargo-transient--exec)])
 
 (transient-define-prefix cargo-transient--test ()
@@ -160,10 +198,10 @@
    ("-c"
     "Compile, but don't run tests"
     "--no-run")
-   ("-f"
+   ("-a"
     "Run all tests regardless of failure."
     "--no-fail-fast")]
-  ["Target Selection"
+  [cargo-transient--group-target-selection
    (cargo-transient--arg-bin)
    (cargo-transient--arg-bins)
    (cargo-transient--arg-doc)
@@ -172,13 +210,17 @@
    (cargo-transient--arg-lib)
    (cargo-transient--arg-test)
    (cargo-transient--arg-tests)]
-  ["Compilation Options"
+  [cargo-transient--group-feature-selection
+   (cargo-transient--arg-features)
+   (cargo-transient--arg-all-features)
+   (cargo-transient--arg-no-default-features)]
+  [cargo-transient--group-compilation-options
    (cargo-transient--arg-release)]
-  ["Manifest Options"
+  [cargo-transient--group-manifest-options
    (cargo-transient--arg-offline)]
   ["Tests"
    (cargo-transient--arg-test-test-name)]
-  ["Actions"
+  [cargo-transient--group-actions
    ("t" "Test" cargo-transient--exec)])
 
 (transient-define-argument cargo-transient--arg-test-test-name ()
@@ -187,62 +229,87 @@
   :key "-n"
   :argument "")
 
-;; Shared options
+;; Target Selection
 
 (transient-define-argument cargo-transient--arg-bin ()
   :description "Only the specified binary"
   :class 'transient-option
-  :key "-b"
+  :key "-tb"
   :argument "--bin=")
 
 (transient-define-argument cargo-transient--arg-bins ()
   :description "All binary targets"
-  :key "-B"
+  :key "-tB"
   :argument "--bins")
 
 (transient-define-argument cargo-transient--arg-doc ()
   :description "Only this library's documentation"
-  :key "-d"
+  :key "-td"
   :argument "--doc")
 
 (transient-define-argument cargo-transient--arg-example ()
   :description "Only the specified example"
   :class 'transient-option
   :multi-value 'repeat
-  :key "-e"
+  :key "-te"
   :argument "--example=")
 
 (transient-define-argument cargo-transient--arg-examples ()
   :description "All examples"
-  :key "-E"
+  :key "-tE"
   :argument "--examples")
 
 (transient-define-argument cargo-transient--arg-lib ()
   :description "Only this package's library"
-  :key "-l"
+  :key "-tl"
   :argument "--lib")
-
-(transient-define-argument cargo-transient--arg-offline ()
-  :description "Without accessing the network"
-  :key "-o"
-  :argument "--offline")
-
-(transient-define-argument cargo-transient--arg-release ()
-  :description "Release mode, with optimizations"
-  :shortarg "-r"
-  :argument "--release")
 
 (transient-define-argument cargo-transient--arg-test ()
   :description "Only the specified test target"
   :class 'transient-option
   :multi-value 'repeat
-  :key "-t"
+  :key "-tt"
   :argument "--test=")
 
 (transient-define-argument cargo-transient--arg-tests ()
   :description "All tests"
-  :key "-T"
+  :key "-tT"
   :argument "--tests")
+
+;; Feature Selection
+
+(transient-define-argument cargo-transient--arg-features ()
+  :description "Features"
+  :class 'transient-option
+  :multi-value 'repeat
+  :key "-ff"
+  :argument "--features=")
+
+(transient-define-argument cargo-transient--arg-all-features ()
+  :description "All available features"
+  :key "-fF"
+  :argument "--all-features")
+
+(transient-define-argument cargo-transient--arg-no-default-features ()
+  :description "Do not active the default features"
+  :key "-fd"
+  :argument "--no-default-features")
+
+;; Compilation Options
+
+(transient-define-argument cargo-transient--arg-release ()
+  :description "Release mode, with optimizations"
+  :shortarg "-cr"
+  :argument "--release")
+
+;; Manifest Options
+
+(transient-define-argument cargo-transient--arg-offline ()
+  :description "Without accessing the network"
+  :key "-mo"
+  :argument "--offline")
+
+;; Private Functions
 
 (defun cargo-transient--exec (&optional args)
   "Run `cargo' with the provided ARGS.
