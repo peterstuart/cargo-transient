@@ -299,7 +299,7 @@
 
 (transient-define-argument cargo-transient--arg-release ()
   :description "Release mode, with optimizations"
-  :shortarg "-cr"
+  :shortarg "-r"
   :argument "--release")
 
 ;; Manifest Options
