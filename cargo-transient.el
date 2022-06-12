@@ -54,15 +54,15 @@
 (transient-define-prefix cargo-transient ()
   "Interact with `cargo' in a transient."
   ["Commands"
-   ("b" "Build" cargo-transient--build)
-   ("c" "Check" cargo-transient--check)
-   ("d" "Doc" cargo-transient--doc)
-   ("k" "Clean" cargo-transient--clean)
-   ("l" "Clippy" cargo-transient--clippy)
-   ("r" "Run" cargo-transient--run)
-   ("t" "Test" cargo-transient--test)])
+   ("b" "Build" cargo-transient--prefix-build)
+   ("c" "Check" cargo-transient--prefix-check)
+   ("d" "Doc" cargo-transient--prefix-doc)
+   ("k" "Clean" cargo-transient--prefix-clean)
+   ("l" "Clippy" cargo-transient--prefix-clippy)
+   ("r" "Run" cargo-transient--prefix-run)
+   ("t" "Test" cargo-transient--prefix-test)])
 
-(transient-define-prefix cargo-transient--build ()
+(transient-define-prefix cargo-transient--prefix-build ()
   "Run `cargo build'."
   :man-page "cargo-build"
   [cargo-transient--group-target-selection
@@ -82,9 +82,14 @@
   [cargo-transient--group-manifest-options
    (cargo-transient--arg-offline)]
   [cargo-transient--group-actions
-   ("b" "Build" cargo-transient--exec)])
+   ("b" "Build" cargo-transient-build)])
 
-(transient-define-prefix cargo-transient--check ()
+(defun cargo-transient-build (&optional args)
+  "Run `cargo build' with the provided ARGS."
+  (interactive (cargo-transient--args))
+  (cargo-transient--exec "build" args))
+
+(transient-define-prefix cargo-transient--prefix-check ()
   "Run `cargo check'."
   :man-page "cargo-check"
   [cargo-transient--group-target-selection
@@ -104,9 +109,14 @@
   [cargo-transient--group-manifest-options
    (cargo-transient--arg-offline)]
   [cargo-transient--group-actions
-   ("c" "Check" cargo-transient--exec)])
+   ("c" "Check" cargo-transient-check)])
 
-(transient-define-prefix cargo-transient--clean ()
+(defun cargo-transient-check (&optional args)
+  "Run `cargo check' with the provided ARGS."
+  (interactive (cargo-transient--args))
+  (cargo-transient--exec "check" args))
+
+(transient-define-prefix cargo-transient--prefix-clean ()
   "Run `cargo clean'."
   :man-page "cargo-clean"
   ["Clean Options"
@@ -119,9 +129,14 @@
   [cargo-transient--group-manifest-options
    (cargo-transient--arg-offline)]
   [cargo-transient--group-actions
-   ("k" "Clean" cargo-transient--exec)])
+   ("k" "Clean" cargo-transient-clean)])
 
-(transient-define-prefix cargo-transient--clippy ()
+(defun cargo-transient-clean (&optional args)
+  "Run `cargo clean' with the provided ARGS."
+  (interactive (cargo-transient--args))
+  (cargo-transient--exec "clean" args))
+
+(transient-define-prefix cargo-transient--prefix-clippy ()
   "Run `cargo clippy'."
   ["Clippy Options"
    ("-a"
@@ -150,9 +165,14 @@
   [cargo-transient--group-manifest-options
    (cargo-transient--arg-offline)]
   [cargo-transient--group-actions
-   ("l" "Clippy" cargo-transient--exec)])
+   ("l" "Clippy" cargo-transient-clippy)])
 
-(transient-define-prefix cargo-transient--doc ()
+(defun cargo-transient-clippy (&optional args)
+  "Run `cargo clippy' with the provided ARGS."
+  (interactive (cargo-transient--args))
+  (cargo-transient--exec "clippy" args))
+
+(transient-define-prefix cargo-transient--prefix-doc ()
   "Run `cargo doc'."
   :man-page "cargo-doc"
   ["Documentation Options"
@@ -180,9 +200,14 @@
   [cargo-transient--group-manifest-options
    (cargo-transient--arg-offline)]
   [cargo-transient--group-actions
-   ("d" "Doc" cargo-transient--exec)])
+   ("d" "Doc" cargo-transient-doc)])
 
-(transient-define-prefix cargo-transient--run ()
+(defun cargo-transient-doc (&optional args)
+  "Run `cargo doc' with the provided ARGS."
+  (interactive (cargo-transient--args))
+  (cargo-transient--exec "doc" args))
+
+(transient-define-prefix cargo-transient--prefix-run ()
   "Run `cargo run`."
   :man-page "cargo-run"
   [cargo-transient--group-target-selection
@@ -200,9 +225,14 @@
    (cargo-transient--arg-arguments
     :description "Arguments to the binary")]
   [cargo-transient--group-actions
-   ("r" "Run" cargo-transient--exec)])
+   ("r" "Run" cargo-transient-run)])
 
-(transient-define-prefix cargo-transient--test ()
+(defun cargo-transient-run (&optional args)
+  "Run `cargo run' with the provided ARGS."
+  (interactive (cargo-transient--args))
+  (cargo-transient--exec "run" args))
+
+(transient-define-prefix cargo-transient--prefix-test ()
   "Run `cargo test'."
   :man-page "cargo-test"
   ["Test Options"
@@ -232,7 +262,12 @@
   ["Tests"
    (cargo-transient--arg-test-test-name)]
   [cargo-transient--group-actions
-   ("t" "Test" cargo-transient--exec)])
+   ("t" "Test" cargo-transient-test)])
+
+(defun cargo-transient-test (&optional args)
+  "Run `cargo test' with the provided ARGS."
+  (interactive (cargo-transient-test))
+  (cargo-transient--exec "test" args))
 
 (transient-define-argument cargo-transient--arg-test-test-name ()
   :description "Only run tests containing this string in their names"
@@ -333,30 +368,26 @@
 
 ;; Private Functions
 
-(defun cargo-transient--exec (&optional args)
-  "Run `cargo' with the provided ARGS.
+(defun cargo-transient--args ()
+  "Return a list of arguments from the current transient command."
+  (list (flatten-list (transient-args transient-current-command))))
 
-Uses the current transient command to determine which `cargo'
-command to run."
-  (interactive
-   (list (flatten-list (transient-args transient-current-command))))
-  (let* ((cargo-command
-          (string-replace "cargo-transient--"
-                          ""
-                          (symbol-name transient-current-command)))
-         (cargo-args
+(defun cargo-transient--exec (command args)
+  "Run `cargo COMMAND ARGS'."
+  (interactive (cargo-transient--args))
+  (let* ((cargo-args
           (if args
               (mapconcat #'identity args " ")
             ""))
          (command
-          (format "cargo %s %s" cargo-command cargo-args))
+          (format "cargo %s %s" command cargo-args))
          (project (project-current))
          (default-directory
           (if project
               (project-root project)
             default-directory))
          (compilation-buffer-name-function
-          (lambda (_mode) (format "*cargo %s*" cargo-command))))
+          (lambda (_mode) (format "*cargo %s*" command))))
     (compile command)))
 
 (provide 'cargo-transient)
