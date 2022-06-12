@@ -44,6 +44,8 @@
   "Compilation Options")
 (defvar cargo-transient--group-manifest-options
   "Manifest Options")
+(defvar cargo-transient--group-arguments
+  "Arguments")
 (defvar cargo-transient--group-actions
   "Actions")
 
@@ -189,6 +191,9 @@
    (cargo-transient--arg-release)]
   [cargo-transient--group-manifest-options
    (cargo-transient--arg-offline)]
+  [cargo-transient--group-arguments
+   (cargo-transient--arg-arguments
+    :description "Arguments to the binary")]
   [cargo-transient--group-actions
    ("r" "Run" cargo-transient--exec)])
 
@@ -309,6 +314,17 @@
   :key "-mo"
   :argument "--offline")
 
+;; Arguments
+
+(transient-define-argument cargo-transient--arg-arguments ()
+  :description "Arguments"
+  :class 'transient-option
+  :key "--"
+  :argument "--"
+  :prompt "Arguments: "
+  :reader 'completing-read-multiple
+  :multi-value 'rest)
+
 ;; Private Functions
 
 (defun cargo-transient--exec (&optional args)
@@ -317,7 +333,7 @@
 Uses the current transient command to determine which `cargo'
 command to run."
   (interactive
-   (list (transient-args transient-current-command)))
+   (list (flatten-list (transient-args transient-current-command))))
   (let* ((cargo-command
           (string-replace "cargo-transient--"
                           ""
