@@ -64,6 +64,7 @@
 
 (transient-define-prefix cargo-transient--build ()
   "Run `cargo build'."
+  :man-page "cargo-build"
   [cargo-transient--group-target-selection
    (cargo-transient--arg-bin)
    (cargo-transient--arg-bins)
@@ -85,6 +86,7 @@
 
 (transient-define-prefix cargo-transient--check ()
   "Run `cargo check'."
+  :man-page "cargo-check"
   [cargo-transient--group-target-selection
    (cargo-transient--arg-bin)
    (cargo-transient--arg-bins)
@@ -106,6 +108,7 @@
 
 (transient-define-prefix cargo-transient--clean ()
   "Run `cargo clean'."
+  :man-page "cargo-clean"
   ["Clean Options"
    (cargo-transient--arg-doc
     :description "Just the documentation directory"
@@ -151,6 +154,7 @@
 
 (transient-define-prefix cargo-transient--doc ()
   "Run `cargo doc'."
+  :man-page "cargo-doc"
   ["Documentation Options"
    ("-o"
     "Open the docs in a browser after builder them"
@@ -180,6 +184,7 @@
 
 (transient-define-prefix cargo-transient--run ()
   "Run `cargo run`."
+  :man-page "cargo-run"
   [cargo-transient--group-target-selection
    (cargo-transient--arg-bin)
    (cargo-transient--arg-example)]
@@ -199,6 +204,7 @@
 
 (transient-define-prefix cargo-transient--test ()
   "Run `cargo test'."
+  :man-page "cargo-test"
   ["Test Options"
    ("-c"
     "Compile, but don't run tests"
