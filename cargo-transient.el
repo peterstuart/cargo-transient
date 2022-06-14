@@ -34,6 +34,22 @@
 (require 'project)
 (require 'transient)
 
+;; Customize
+
+(defgroup cargo-transient nil
+  "A transient for interacting with cargo."
+  :group 'tools
+  :prefix "cargo-transient-")
+
+(defcustom cargo-transient-compilation-buffer-name-function nil
+  "Function to compute the name of a cargo compilation buffer.
+It is equivalent to `project-compilation-buffer-name-function'."
+  :group 'cargo-transient
+  :type '(choice (const :tag "Default" nil)
+                 (const :tag "Prefixed with root directory name"
+                        project-prefixed-buffer-name)
+                 (function :tag "Custom function")))
+
 ;; Group Names
 
 (defvar cargo-transient--group-target-selection
@@ -387,7 +403,8 @@
               (project-root project)
             default-directory))
          (compilation-buffer-name-function
-          (lambda (_mode) (format "*cargo %s*" command))))
+          (or cargo-transient-compilation-buffer-name-function
+              compilation-buffer-name-function)))
     (compile command)))
 
 (provide 'cargo-transient)
