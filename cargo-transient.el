@@ -1,4 +1,4 @@
-;;; cargo-transient.el --- A transient for interacting with cargo  -*- lexical-binding: t -*-
+;;; cargo-transient.el --- A transient for cargo  -*- lexical-binding: t -*-
 
 ;; Copyright (C) 2022 Peter Stuart
 
@@ -25,7 +25,7 @@
 
 ;;; Commentary:
 
-;; Provides a transient for interacting with Rust's `cargo' tool.
+;; Provides a transient for Rust's `cargo' tool.
 
 ;; See function `cargo-transient'.
 
@@ -37,7 +37,7 @@
 ;; Customize
 
 (defgroup cargo-transient nil
-  "A transient for interacting with cargo."
+  "A transient for cargo."
   :group 'tools
   :prefix "cargo-transient-")
 

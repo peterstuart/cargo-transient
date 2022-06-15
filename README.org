@@ -1,0 +1,15 @@
+* cargo-transient
+cargo-transient provides a [[https://github.com/magit/transient][transient]] interface for [[https://github.com/rust-lang/cargo][cargo]].
+** Usage
+~M-x cargo-transient~
+
+By default, all commands will share the same compilation buffer, but that can be changed by customizing ~cargo-transient-compilation-buffer-name-function~.
+** Supported Commands
+- ~build~
+- ~check~
+- ~clean~
+- ~clippy~
+- ~run~
+- ~test~
+
+Not all commands and arguments are supported. If cargo-transient is missing support for something you need, please [[https://github.com/peterstuart/cargo-transient/compare][open a pull request]] or [[https://github.com/peterstuart/cargo-transient/issues/new][file an issue]].
