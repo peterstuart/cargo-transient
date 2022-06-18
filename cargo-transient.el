@@ -88,6 +88,7 @@ It is equivalent to `project-compilation-buffer-name-function'."
 
 ;; Transients
 
+;;;###autoload (autoload 'cargo-transient "cargo-transient" nil t)
 (transient-define-prefix cargo-transient ()
   "Interact with `cargo' in a transient."
   ["Commands"
