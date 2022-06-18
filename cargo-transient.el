@@ -52,18 +52,19 @@ It is equivalent to `project-compilation-buffer-name-function'."
 
 ;; Group Names
 
-(defconst cargo-transient--group-target-selection
-  "Target Selection")
-(defconst cargo-transient--group-feature-selection
-  "Feature Selection")
-(defconst cargo-transient--group-compilation-options
-  "Compilation Options")
-(defconst cargo-transient--group-manifest-options
-  "Manifest Options")
-(defconst cargo-transient--group-arguments
-  "Arguments")
-(defconst cargo-transient--group-actions
-  "Actions")
+(eval-when-compile
+  (defconst cargo-transient--group-target-selection
+    "Target Selection")
+  (defconst cargo-transient--group-feature-selection
+    "Feature Selection")
+  (defconst cargo-transient--group-compilation-options
+    "Compilation Options")
+  (defconst cargo-transient--group-manifest-options
+    "Manifest Options")
+  (defconst cargo-transient--group-arguments
+    "Arguments")
+  (defconst cargo-transient--group-actions
+    "Actions"))
 
 ;; Transients
 
