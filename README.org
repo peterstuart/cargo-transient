@@ -1,5 +1,7 @@
 * cargo-transient
 cargo-transient provides a [[https://github.com/magit/transient][transient]] interface for [[https://github.com/rust-lang/cargo][cargo]].
+
+[[./screenshots/run.png]]
 ** Usage
 ~M-x cargo-transient~
 
