@@ -282,7 +282,7 @@ It is equivalent to `project-compilation-buffer-name-function'."
 
 (defun cargo-transient-test (&optional args)
   "Run `cargo test' with the provided ARGS."
-  (interactive (cargo-transient-test))
+  (interactive (cargo-transient--args))
   (cargo-transient--exec "test" args))
 
 (transient-define-argument cargo-transient--arg-test-test-name ()
