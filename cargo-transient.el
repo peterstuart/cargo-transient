@@ -252,6 +252,7 @@ It is equivalent to `project-compilation-buffer-name-function'."
   "Run `cargo test'."
   :man-page "cargo-test"
   ["Test Options"
+   (cargo-transient--arg-test-test-name)
    ("-c"
     "Compile, but don't run tests"
     "--no-run")
@@ -275,8 +276,6 @@ It is equivalent to `project-compilation-buffer-name-function'."
    (cargo-transient--arg-release)]
   [cargo-transient--group-manifest-options
    (cargo-transient--arg-offline)]
-  ["Tests"
-   (cargo-transient--arg-test-test-name)]
   [cargo-transient--group-actions
    ("t" "Test" cargo-transient-test)])
 
