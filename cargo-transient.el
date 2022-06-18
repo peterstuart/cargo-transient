@@ -296,46 +296,46 @@ It is equivalent to `project-compilation-buffer-name-function'."
 (transient-define-argument cargo-transient--arg-bin ()
   :description "Only the specified binary"
   :class 'transient-option
-  :key "-tb"
+  :key "-b"
   :argument "--bin=")
 
 (transient-define-argument cargo-transient--arg-bins ()
   :description "All binary targets"
-  :key "-tB"
+  :key "-B"
   :argument "--bins")
 
 (transient-define-argument cargo-transient--arg-doc ()
   :description "Only this library's documentation"
-  :key "-td"
+  :key "-d"
   :argument "--doc")
 
 (transient-define-argument cargo-transient--arg-example ()
   :description "Only the specified example"
   :class 'transient-option
   :multi-value 'repeat
-  :key "-te"
+  :key "-e"
   :argument "--example=")
 
 (transient-define-argument cargo-transient--arg-examples ()
   :description "All examples"
-  :key "-tE"
+  :key "-E"
   :argument "--examples")
 
 (transient-define-argument cargo-transient--arg-lib ()
   :description "Only this package's library"
-  :key "-tl"
+  :key "-l"
   :argument "--lib")
 
 (transient-define-argument cargo-transient--arg-test ()
   :description "Only the specified test target"
   :class 'transient-option
   :multi-value 'repeat
-  :key "-tt"
+  :key "-t"
   :argument "--test=")
 
 (transient-define-argument cargo-transient--arg-tests ()
   :description "All tests"
-  :key "-tT"
+  :key "-T"
   :argument "--tests")
 
 ;; Feature Selection
@@ -344,17 +344,17 @@ It is equivalent to `project-compilation-buffer-name-function'."
   :description "Features"
   :class 'transient-option
   :multi-value 'repeat
-  :key "-ff"
+  :key "-f"
   :argument "--features=")
 
 (transient-define-argument cargo-transient--arg-all-features ()
   :description "All available features"
-  :key "-fF"
+  :key "-F"
   :argument "--all-features")
 
 (transient-define-argument cargo-transient--arg-no-default-features ()
-  :description "Do not active the default features"
-  :key "-fd"
+  :description "Do not activate the default features"
+  :key "-g"
   :argument "--no-default-features")
 
 ;; Compilation Options
@@ -368,7 +368,7 @@ It is equivalent to `project-compilation-buffer-name-function'."
 
 (transient-define-argument cargo-transient--arg-offline ()
   :description "Without accessing the network"
-  :key "-mo"
+  :key "-u"
   :argument "--offline")
 
 ;; Arguments
