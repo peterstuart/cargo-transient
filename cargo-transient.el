@@ -35,6 +35,7 @@
 ;; - check
 ;; - clean
 ;; - clippy
+;; - fmt
 ;; - run
 ;; - test
 
@@ -96,6 +97,7 @@ It is equivalent to `project-compilation-buffer-name-function'."
    ("b" "Build" cargo-transient--prefix-build)
    ("c" "Check" cargo-transient--prefix-check)
    ("d" "Doc" cargo-transient--prefix-doc)
+   ("f" "Format" cargo-transient-fmt)
    ("k" "Clean" cargo-transient--prefix-clean)
    ("l" "Clippy" cargo-transient--prefix-clippy)
    ("r" "Run" cargo-transient--prefix-run)
@@ -245,6 +247,11 @@ It is equivalent to `project-compilation-buffer-name-function'."
   "Run `cargo doc' with the provided ARGS."
   (interactive (cargo-transient--args))
   (cargo-transient--exec "doc" args))
+
+(defun cargo-transient-fmt ()
+  "Run `cargo fmt'."
+  (interactive)
+  (cargo-transient--exec "fmt"))
 
 (transient-define-prefix cargo-transient--prefix-run ()
   "Run `cargo run`."
@@ -410,7 +417,7 @@ It is equivalent to `project-compilation-buffer-name-function'."
   "Return a list of arguments from the current transient command."
   (list (flatten-list (transient-args transient-current-command))))
 
-(defun cargo-transient--exec (command args)
+(defun cargo-transient--exec (command &optional args)
   "Run `cargo COMMAND ARGS'."
   (interactive (cargo-transient--args))
   (let* ((cargo-args
