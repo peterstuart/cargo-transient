@@ -1,4 +1,4 @@
-;;; cargo-transient.el --- A transient for cargo  -*- lexical-binding: t -*-
+;;; cargo-transient.el --- A transient UI for Cargo, Rust's package manager -*- lexical-binding: t -*-
 
 ;; Copyright (C) 2022 Peter Stuart
 
