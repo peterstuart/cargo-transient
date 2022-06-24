@@ -20,6 +20,7 @@ By default, all commands will share the same compilation buffer, but that can be
 - ~check~
 - ~clean~
 - ~clippy~
+- ~doc~
 - ~fmt~
 - ~run~
 - ~test~

@@ -35,6 +35,7 @@
 ;; - check
 ;; - clean
 ;; - clippy
+;; - doc
 ;; - fmt
 ;; - run
 ;; - test
