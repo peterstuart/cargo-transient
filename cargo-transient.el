@@ -181,12 +181,6 @@ It is equivalent to `project-compilation-buffer-name-function'."
 (transient-define-prefix cargo-transient--prefix-clippy ()
   "Run `cargo clippy'."
   ["Clippy Options"
-   ("-a"
-    "Automatically apply lint suggestions"
-    "--fix")
-   ("-A"
-    "Automatically apply lint suggestions, regardless of dirty or staged status"
-    "--fix --allow-dirty --allow-staged")
    ("-n"
     "Run Clippy only on the given crate, without linting the dependencies"
     "--no-deps")]
@@ -207,12 +201,24 @@ It is equivalent to `project-compilation-buffer-name-function'."
   [cargo-transient--group-manifest-options
    (cargo-transient--arg-offline)]
   [cargo-transient--group-actions
-   ("l" "Clippy" cargo-transient-clippy)])
+   ("l" "Clippy" cargo-transient-clippy)
+   ("f" "Fix" cargo-transient-clippy-fix)
+   ("F" "Fix all" cargo-transient-clippy-fix-all)])
 
 (defun cargo-transient-clippy (&optional args)
   "Run `cargo clippy' with the provided ARGS."
   (interactive (cargo-transient--args))
   (cargo-transient--exec "clippy" args))
+
+(defun cargo-transient-clippy-fix (&optional args)
+  "Automatically apply lint suggestions."
+  (interactive (cargo-transient--args))
+  (cargo-transient--exec "clippy --fix" args))
+
+(defun cargo-transient-clippy-fix-all (&optional args)
+  "Automatically apply lint suggestions, regardless of dirty or staged status."
+  (interactive (cargo-transient--args))
+  (cargo-transient--exec "clippy --fix --allow-dirty --allow-staged" args))
 
 (transient-define-prefix cargo-transient--prefix-doc ()
   "Run `cargo doc'."
