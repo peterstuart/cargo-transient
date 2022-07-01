@@ -126,7 +126,7 @@ It is equivalent to `project-compilation-buffer-name-function'."
   [cargo-transient--group-actions
    ("b" "Build" cargo-transient-build)])
 
-(defun cargo-transient-build (&optional args)
+(defun cargo-transient-build (&rest args)
   "Run `cargo build' with the provided ARGS."
   (interactive (cargo-transient--args))
   (cargo-transient--exec "build" args))
@@ -153,7 +153,7 @@ It is equivalent to `project-compilation-buffer-name-function'."
   [cargo-transient--group-actions
    ("c" "Check" cargo-transient-check)])
 
-(defun cargo-transient-check (&optional args)
+(defun cargo-transient-check (&rest args)
   "Run `cargo check' with the provided ARGS."
   (interactive (cargo-transient--args))
   (cargo-transient--exec "check" args))
@@ -173,7 +173,7 @@ It is equivalent to `project-compilation-buffer-name-function'."
   [cargo-transient--group-actions
    ("k" "Clean" cargo-transient-clean)])
 
-(defun cargo-transient-clean (&optional args)
+(defun cargo-transient-clean (&rest args)
   "Run `cargo clean' with the provided ARGS."
   (interactive (cargo-transient--args))
   (cargo-transient--exec "clean" args))
@@ -205,17 +205,17 @@ It is equivalent to `project-compilation-buffer-name-function'."
    ("f" "Fix" cargo-transient-clippy-fix)
    ("F" "Fix all" cargo-transient-clippy-fix-all)])
 
-(defun cargo-transient-clippy (&optional args)
+(defun cargo-transient-clippy (&rest args)
   "Run `cargo clippy' with the provided ARGS."
   (interactive (cargo-transient--args))
   (cargo-transient--exec "clippy" args))
 
-(defun cargo-transient-clippy-fix (&optional args)
+(defun cargo-transient-clippy-fix (&rest args)
   "Automatically apply lint suggestions."
   (interactive (cargo-transient--args))
   (cargo-transient--exec "clippy --fix" args))
 
-(defun cargo-transient-clippy-fix-all (&optional args)
+(defun cargo-transient-clippy-fix-all (&rest args)
   "Automatically apply lint suggestions, regardless of dirty or staged status."
   (interactive (cargo-transient--args))
   (cargo-transient--exec "clippy --fix --allow-dirty --allow-staged" args))
@@ -250,7 +250,7 @@ It is equivalent to `project-compilation-buffer-name-function'."
   [cargo-transient--group-actions
    ("d" "Doc" cargo-transient-doc)])
 
-(defun cargo-transient-doc (&optional args)
+(defun cargo-transient-doc (&rest args)
   "Run `cargo doc' with the provided ARGS."
   (interactive (cargo-transient--args))
   (cargo-transient--exec "doc" args))
@@ -280,7 +280,7 @@ It is equivalent to `project-compilation-buffer-name-function'."
   [cargo-transient--group-actions
    ("r" "Run" cargo-transient-run)])
 
-(defun cargo-transient-run (&optional args)
+(defun cargo-transient-run (&rest args)
   "Run `cargo run' with the provided ARGS."
   (interactive (cargo-transient--args))
   (cargo-transient--exec "run" args))
@@ -290,6 +290,9 @@ It is equivalent to `project-compilation-buffer-name-function'."
   :man-page "cargo-test"
   ["Test Options"
    (cargo-transient--arg-test-test-name)
+   ("-x"
+    "Don't capture stdout/stderr of each task"
+    "--nocapture")
    ("-c"
     "Compile, but don't run tests"
     "--no-run")
@@ -316,7 +319,7 @@ It is equivalent to `project-compilation-buffer-name-function'."
   [cargo-transient--group-actions
    ("t" "Test" cargo-transient-test)])
 
-(defun cargo-transient-test (&optional args)
+(defun cargo-transient-test (&rest args)
   "Run `cargo test' with the provided ARGS."
   (interactive (cargo-transient--args))
   (cargo-transient--exec "test" args))
@@ -420,27 +423,42 @@ It is equivalent to `project-compilation-buffer-name-function'."
 
 ;; Private Functions
 
+(defconst cargo-transient--post-args
+  '("--nocapture")
+  "Arguments which must be placed after a trailing `--' in the
+arguments passed to `cargo'.")
+
+(defun cargo-transient--is-post-arg (arg)
+  "Return whether an argument must be placed after a trailing `--'
+ in the arguments passed to `cargo'."
+  (member arg cargo-transient--post-args))
+
+(defun cargo-transient--rearrange-args (args)
+  "Return arguments, rearranged if necessary, to handle arguments
+which must occur after a trailing `--' in the arguments passed to
+`cargo'.
+
+If rearranging is necessary, `--' will be added to the list of
+arguments."
+  (let* ((pre-args  (cl-remove-if #'cargo-transient--is-post-arg args))
+         (post-args (cl-remove-if-not #'cargo-transient--is-post-arg args)))
+    (if (= (length post-args) 0)
+        pre-args
+      (append pre-args '("--") post-args))))
+
 (defun cargo-transient--args ()
   "Return a list of arguments from the current transient command."
-  (list (flatten-list (transient-args transient-current-command))))
+  (let ((args (flatten-list (transient-args transient-current-command))))
+    (cargo-transient--rearrange-args args)))
 
 (defun cargo-transient--exec (command &optional args)
   "Run `cargo COMMAND ARGS'."
-  (interactive (cargo-transient--args))
-  (let* ((cargo-args
-          (if args
-              (mapconcat #'identity args " ")
-            ""))
-         (command
-          (format "cargo %s %s" command cargo-args))
-         (project (project-current))
-         (default-directory
-          (if project
-              (project-root project)
-            default-directory))
-         (compilation-buffer-name-function
-          (or cargo-transient-compilation-buffer-name-function
-              compilation-buffer-name-function)))
+  (let* ((cargo-args        (if args (mapconcat #'identity args " ") ""))
+         (command           (format "cargo %s %s" command cargo-args))
+         (project           (project-current))
+         (default-directory (if project (project-root project) default-directory))
+         (compilation-buffer-name-function (or cargo-transient-compilation-buffer-name-function
+                                               compilation-buffer-name-function)))
     (compile command)))
 
 (provide 'cargo-transient)
