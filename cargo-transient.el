@@ -73,6 +73,11 @@ It is equivalent to `project-compilation-buffer-name-function'."
                         project-prefixed-buffer-name)
                  (function :tag "Custom function")))
 
+(defcustom cargo-transient-always-run-from-default-dir nil
+  "Whether to always run cargo from `default-directory' instead of project root."
+  :group 'cargo-transient
+  :type 'boolean)
+
 ;; Group Names
 
 (eval-when-compile
@@ -456,7 +461,10 @@ arguments."
   (let* ((cargo-args        (if args (mapconcat #'identity args " ") ""))
          (command           (format "cargo %s %s" command cargo-args))
          (project           (project-current))
-         (default-directory (if project (project-root project) default-directory))
+         (default-directory (if (and (not cargo-transient-always-run-from-default-dir)
+                                     project)
+                                (project-root project)
+                              default-directory))
          (compilation-buffer-name-function (or cargo-transient-compilation-buffer-name-function
                                                compilation-buffer-name-function)))
     (compile command)))
