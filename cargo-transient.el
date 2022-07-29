@@ -70,8 +70,13 @@ It is equivalent to `project-compilation-buffer-name-function'."
   :group 'cargo-transient
   :type '(choice (const :tag "Default" nil)
                  (const :tag "Prefixed with root directory name"
-                        project-prefixed-buffer-name)
+                        cargo-transient-project-prefixed-buffer-name)
                  (function :tag "Custom function")))
+
+(defun cargo-transient-project-prefixed-buffer-name (mode)
+  (let* ((project           (project-current))
+         (default-directory (if project (project-root project) default-directory)))
+    (project-prefixed-buffer-name mode)))
 
 ;; Group Names
 
