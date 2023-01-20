@@ -461,7 +461,9 @@ arguments."
   (let* ((cargo-args        (if args (mapconcat #'identity args " ") ""))
          (command           (format "cargo %s %s" command cargo-args))
          (compilation-buffer-name-function (or cargo-transient-compilation-buffer-name-function
-                                               compilation-buffer-name-function)))
+                                               compilation-buffer-name-function))
+         (default-directory (or (locate-dominating-file default-directory "Cargo.toml")
+                                default-directory)))
     (compile command)))
 
 (provide 'cargo-transient)
