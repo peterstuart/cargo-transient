@@ -113,6 +113,7 @@ It is equivalent to `project-compilation-buffer-name-function'."
   "Run `cargo build'."
   :man-page "cargo-build"
   [cargo-transient--group-target-selection
+   (cargo-transient--arg-all-targets)
    (cargo-transient--arg-bin)
    (cargo-transient--arg-bins)
    (cargo-transient--arg-example)
@@ -140,6 +141,7 @@ It is equivalent to `project-compilation-buffer-name-function'."
   "Run `cargo check'."
   :man-page "cargo-check"
   [cargo-transient--group-target-selection
+   (cargo-transient--arg-all-targets)
    (cargo-transient--arg-bin)
    (cargo-transient--arg-bins)
    (cargo-transient--arg-example)
@@ -194,6 +196,7 @@ It is equivalent to `project-compilation-buffer-name-function'."
    (cargo-transient--arg-all-features)
    (cargo-transient--arg-no-default-features)]
   [cargo-transient--group-target-selection
+   (cargo-transient--arg-all-targets)
    (cargo-transient--arg-bin)
    (cargo-transient--arg-bins)
    (cargo-transient--arg-example)
@@ -336,6 +339,11 @@ It is equivalent to `project-compilation-buffer-name-function'."
   :argument "")
 
 ;; Target Selection
+
+(transient-define-argument cargo-transient--arg-all-targets ()
+  :description "All targets"
+  :key "-a"
+  :argument "--all-targets")
 
 (transient-define-argument cargo-transient--arg-bin ()
   :description "Only the specified binary"
