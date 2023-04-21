@@ -232,9 +232,6 @@ It is equivalent to `project-compilation-buffer-name-function'."
   "Run `cargo doc'."
   :man-page "cargo-doc"
   ["Documentation Options"
-   ("-o"
-    "Open the docs in a browser after builder them"
-    "--open")
    ("-n"
     "Do not build documentation for dependencies"
     "--no-deps")
@@ -256,12 +253,18 @@ It is equivalent to `project-compilation-buffer-name-function'."
   [cargo-transient--group-manifest-options
    (cargo-transient--arg-offline)]
   [cargo-transient--group-actions
-   ("d" "Doc" cargo-transient-doc)])
+   ("d" "Doc" cargo-transient-doc)
+   ("o" "Open" cargo-transient-doc-open)])
 
 (defun cargo-transient-doc (&rest args)
   "Run `cargo doc' with the provided ARGS."
   (interactive (cargo-transient--args))
   (cargo-transient--exec "doc" args))
+
+(defun cargo-transient-doc-open (&rest args)
+  "Open the docs in a browser after building them."
+  (interactive (cargo-transient--args))
+  (cargo-transient--exec "doc --open" args))
 
 (defun cargo-transient-fmt ()
   "Run `cargo fmt'."
