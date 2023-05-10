@@ -94,6 +94,15 @@ It is equivalent to `project-compilation-buffer-name-function'."
   (defconst cargo-transient--group-actions
     "Actions"))
 
+;; Utils
+
+(defun cargo-transient--completing-read (generate-collection)
+  "Return a function which reads a string using `completing-read'.
+
+GENERATE-COLLECTION is a function which returns a list of strings."
+  (lambda (prompt initial-input history)
+    (completing-read prompt (funcall generate-collection) nil nil initial-input history)))
+
 ;; Transients
 
 ;;;###autoload (autoload 'cargo-transient "cargo-transient" nil t)
@@ -352,7 +361,8 @@ It is equivalent to `project-compilation-buffer-name-function'."
   :description "Only the specified binary"
   :class 'transient-option
   :key "-b"
-  :argument "--bin=")
+  :argument "--bin="
+  :reader (cargo-transient--completing-read 'cargo-transient--target-choices))
 
 (transient-define-argument cargo-transient--arg-bins ()
   :description "All binary targets"
@@ -476,6 +486,29 @@ arguments."
          (default-directory (or (locate-dominating-file default-directory "Cargo.toml")
                                 default-directory)))
     (compile command)))
+
+(defun cargo-transient--manifest ()
+  "Run `cargo read-manifest' and return the parsed JSON as an alist."
+  (json-read-from-string (shell-command-to-string "cargo read-manifest")))
+
+(defun cargo-transient--target-is-bin (target)
+  "Return t if the given target is a binary target."
+  (equal (cdr (assoc 'kind target)) ["bin"]))
+
+(defun cargo-transient--target-name (target)
+  "Return the name of the given target."
+  (cdr (assoc 'name target)))
+
+(defun cargo-transient--target-choices ()
+  "Return a list of sorted target names for the current project."
+  (condition-case err
+      (let* ((manifest    (cargo-transient--manifest))
+             (targets     (cdr (assoc 'targets manifest)))
+             (bin-targets (seq-filter 'cargo-transient--target-is-bin targets)))
+        (sort (mapcar 'cargo-transient--target-name bin-targets) 'string<))
+    (error (progn
+             (message "Error reading targets from manifest: %s" err)
+             '()))))
 
 (provide 'cargo-transient)
 
