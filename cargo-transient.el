@@ -123,7 +123,8 @@ GENERATE-COLLECTION is a function which returns a list of strings."
    ("k" "Clean" cargo-transient--prefix-clean)
    ("l" "Clippy" cargo-transient--prefix-clippy)
    ("r" "Run" cargo-transient--prefix-run)
-   ("t" "Test" cargo-transient--prefix-test)])
+   ("t" "Test" cargo-transient--prefix-test)
+   ("!" "Command" cargo-transient-command)])
 
 (transient-define-prefix cargo-transient--prefix-build ()
   "Run `cargo build'."
@@ -356,6 +357,13 @@ GENERATE-COLLECTION is a function which returns a list of strings."
   :class 'transient-option
   :key "-n"
   :argument "")
+
+(defun cargo-transient-command ()
+  "Run a cargo command."
+  (interactive)
+  (let* ((prompt  (format "Async shell command in %s: " (abbreviate-file-name default-directory)))
+         (command (read-shell-command prompt "cargo ")))
+    (async-shell-command command)))
 
 ;; Target Selection
 
