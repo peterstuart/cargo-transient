@@ -144,7 +144,7 @@ GENERATE-COLLECTION is a function which returns a list of strings."
    (cargo-transient--arg-no-default-features)]
   [cargo-transient--group-compilation-options
    (cargo-transient--arg-release)]
-  [cargo-transient--group-manifest-options
+  [7 cargo-transient--group-manifest-options
    (cargo-transient--arg-offline)]
   [cargo-transient--group-actions
    ("b" "Build" cargo-transient-build)])
@@ -172,7 +172,7 @@ GENERATE-COLLECTION is a function which returns a list of strings."
    (cargo-transient--arg-no-default-features)]
   [cargo-transient--group-compilation-options
    (cargo-transient--arg-release)]
-  [cargo-transient--group-manifest-options
+  [7 cargo-transient--group-manifest-options
    (cargo-transient--arg-offline)]
   [cargo-transient--group-actions
    ("c" "Check" cargo-transient-check)])
@@ -192,7 +192,7 @@ GENERATE-COLLECTION is a function which returns a list of strings."
    (cargo-transient--arg-release
     :description "Release artifacts"
     :key "-r")]
-  [cargo-transient--group-manifest-options
+  [7 cargo-transient--group-manifest-options
    (cargo-transient--arg-offline)]
   [cargo-transient--group-actions
    ("k" "Clean" cargo-transient-clean)])
@@ -223,7 +223,7 @@ GENERATE-COLLECTION is a function which returns a list of strings."
    (cargo-transient--arg-tests)]
   [cargo-transient--group-compilation-options
    (cargo-transient--arg-release)]
-  [cargo-transient--group-manifest-options
+  [7 cargo-transient--group-manifest-options
    (cargo-transient--arg-offline)]
   [cargo-transient--group-actions
    ("l" "Clippy" cargo-transient-clippy)
@@ -267,7 +267,7 @@ GENERATE-COLLECTION is a function which returns a list of strings."
    (cargo-transient--arg-no-default-features)]
   [cargo-transient--group-compilation-options
    (cargo-transient--arg-release)]
-  [cargo-transient--group-manifest-options
+  [7 cargo-transient--group-manifest-options
    (cargo-transient--arg-offline)]
   [cargo-transient--group-actions
    ("d" "Doc" cargo-transient-doc)
@@ -300,7 +300,7 @@ GENERATE-COLLECTION is a function which returns a list of strings."
    (cargo-transient--arg-no-default-features)]
   [cargo-transient--group-compilation-options
    (cargo-transient--arg-release)]
-  [cargo-transient--group-manifest-options
+  [7 cargo-transient--group-manifest-options
    (cargo-transient--arg-offline)]
   [cargo-transient--group-arguments
    (cargo-transient--arg-arguments
@@ -342,7 +342,7 @@ GENERATE-COLLECTION is a function which returns a list of strings."
    (cargo-transient--arg-no-default-features)]
   [cargo-transient--group-compilation-options
    (cargo-transient--arg-release)]
-  [cargo-transient--group-manifest-options
+  [7 cargo-transient--group-manifest-options
    (cargo-transient--arg-offline)]
   [cargo-transient--group-actions
    ("t" "Test" cargo-transient-test)])
