@@ -26,3 +26,5 @@ By default, all commands will share the same compilation buffer, but that can be
 - ~test~
 
 Not all commands and arguments are supported. If cargo-transient is missing support for something you need, please [[https://github.com/peterstuart/cargo-transient/compare][open a pull request]] or [[https://github.com/peterstuart/cargo-transient/issues/new][file an issue]].
+*** Levels
+Some uncommon arguments are hidden by default. Type ~C-x l~ while in a transient to see all arguments and adjust levels.
