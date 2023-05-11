@@ -487,9 +487,13 @@ arguments."
                                 default-directory)))
     (compile command)))
 
-(defun cargo-transient--manifest ()
-  "Run `cargo read-manifest' and return the parsed JSON as an alist."
-  (json-read-from-string (shell-command-to-string "cargo read-manifest")))
+(defun cargo-transient--metadata ()
+  "Run `cargo metadata' and return the parsed JSON as an alist."
+  (json-read-from-string (shell-command-to-string "cargo metadata --no-deps --format-version 1")))
+
+(defun cargo-transient--targets-from-package (package)
+  "Return the targets from the given PACKAGE."
+  (append (cdr (assoc 'targets package)) nil))
 
 (defun cargo-transient--target-is-bin (target)
   "Return t if the given target is a binary target."
@@ -502,12 +506,13 @@ arguments."
 (defun cargo-transient--target-choices ()
   "Return a list of sorted target names for the current project."
   (condition-case err
-      (let* ((manifest    (cargo-transient--manifest))
-             (targets     (cdr (assoc 'targets manifest)))
+      (let* ((metadata    (cargo-transient--metadata))
+             (packages    (cdr (assoc 'packages metadata)))
+             (targets     (mapcan 'cargo-transient--targets-from-package packages))
              (bin-targets (seq-filter 'cargo-transient--target-is-bin targets)))
         (sort (mapcar 'cargo-transient--target-name bin-targets) 'string<))
     (error (progn
-             (message "Error reading targets from manifest: %s" err)
+             (message "Error reading targets from metadata: %s" err)
              '()))))
 
 (provide 'cargo-transient)
