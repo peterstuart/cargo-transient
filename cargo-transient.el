@@ -103,6 +103,13 @@ GENERATE-COLLECTION is a function which returns a list of strings."
   (lambda (prompt initial-input history)
     (completing-read prompt (funcall generate-collection) nil nil initial-input history)))
 
+(defun cargo-transient--completing-read-multiple (generate-collection)
+  "Return a function which reads a list of strings using `completing-read-multiple'.
+
+GENERATE-COLLECTION is a function which returns a list of strings."
+  (lambda (prompt initial-input history)
+    (completing-read-multiple prompt (funcall generate-collection) nil nil initial-input history)))
+
 ;; Transients
 
 ;;;###autoload (autoload 'cargo-transient "cargo-transient" nil t)
@@ -410,7 +417,8 @@ GENERATE-COLLECTION is a function which returns a list of strings."
   :class 'transient-option
   :multi-value 'repeat
   :key "-f"
-  :argument "--features=")
+  :argument "--features="
+  :reader (cargo-transient--completing-read-multiple 'cargo-transient--feature-choices))
 
 (transient-define-argument cargo-transient--arg-all-features ()
   :description "All available features"
@@ -491,6 +499,10 @@ arguments."
   "Run `cargo metadata' and return the parsed JSON as an alist."
   (json-read-from-string (shell-command-to-string "cargo metadata --no-deps --format-version 1")))
 
+(defun cargo-transient--packages-from-metadata (metadata)
+  "Return the packages from the given METADATA."
+  (cdr (assoc 'packages metadata)))
+
 (defun cargo-transient--targets-from-package (package)
   "Return the targets from the given PACKAGE."
   (append (cdr (assoc 'targets package)) nil))
@@ -504,15 +516,31 @@ arguments."
   (cdr (assoc 'name target)))
 
 (defun cargo-transient--target-choices ()
-  "Return a list of sorted target names for the current project."
+  "Return a sorted list of target names for the current project."
   (condition-case err
       (let* ((metadata    (cargo-transient--metadata))
-             (packages    (cdr (assoc 'packages metadata)))
+             (packages    (cargo-transient--packages-from-metadata metadata))
              (targets     (mapcan 'cargo-transient--targets-from-package packages))
              (bin-targets (seq-filter 'cargo-transient--target-is-bin targets)))
         (sort (mapcar 'cargo-transient--target-name bin-targets) 'string<))
     (error (progn
              (message "Error reading targets from metadata: %s" err)
+             '()))))
+
+(defun cargo-transient--features-from-package (package)
+  "Return the features from the given PACKAGE."
+  (let ((features (append (cdr (assoc 'features package)) nil)))
+    (mapcar (lambda (feature) (symbol-name (car feature))) features)))
+
+(defun cargo-transient--feature-choices ()
+  "Return a sorted list of features for the current project."
+  (condition-case err
+      (let* ((metadata (cargo-transient--metadata))
+             (packages (cargo-transient--packages-from-metadata metadata))
+             (features (mapcan 'cargo-transient--features-from-package packages)))
+        (sort features 'string<))
+    (error (progn
+             (message "Error reading features from metadata: %s" err)
              '()))))
 
 (provide 'cargo-transient)
