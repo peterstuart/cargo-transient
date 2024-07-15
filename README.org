@@ -9,7 +9,7 @@ cargo-transient is available on [[https://melpa.org/#/cargo-transient][MELPA]].
 #+begin_src elisp
   (use-package cargo-transient
     :custom
-    (cargo-transient-buffer-name-function '#project-prefixed-buffer-name))
+    (cargo-transient-buffer-name-function #'project-prefixed-buffer-name))
 #+end_src
 
 By default, all commands will share the same compilation buffer, but that can be changed by customizing ~cargo-transient-compilation-buffer-name-function~.
