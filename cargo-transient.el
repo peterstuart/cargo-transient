@@ -78,6 +78,11 @@ It is equivalent to `project-compilation-buffer-name-function'."
          (default-directory (if project (project-root project) default-directory)))
     (project-prefixed-buffer-name mode)))
 
+(defcustom cargo-transient-cargo-path "cargo"
+  "Path to the cargo program."
+  :group 'cargo-transient
+  :type 'string)
+
 ;; Group Names
 
 (eval-when-compile
@@ -362,7 +367,7 @@ GENERATE-COLLECTION is a function which returns a list of strings."
   "Run a cargo command."
   (interactive)
   (let* ((prompt  (format "Async shell command in %s: " (abbreviate-file-name default-directory)))
-         (command (read-shell-command prompt "cargo ")))
+         (command (read-shell-command prompt (format "%s " cargo-transient-cargo-path))))
     (async-shell-command command)))
 
 ;; Target Selection
@@ -496,7 +501,7 @@ arguments."
 (defun cargo-transient--exec (command &optional args)
   "Run `cargo COMMAND ARGS'."
   (let* ((cargo-args        (if args (mapconcat #'identity args " ") ""))
-         (command           (format "cargo %s %s" command cargo-args))
+         (command           (format "%s %s %s" cargo-transient-cargo-path command cargo-args))
          (compilation-buffer-name-function (or cargo-transient-compilation-buffer-name-function
                                                compilation-buffer-name-function))
          (default-directory (or (locate-dominating-file default-directory "Cargo.toml")
@@ -505,7 +510,7 @@ arguments."
 
 (defun cargo-transient--metadata ()
   "Run `cargo metadata' and return the parsed JSON as an alist."
-  (json-read-from-string (shell-command-to-string "cargo metadata --no-deps --format-version 1")))
+  (json-read-from-string (shell-command-to-string (format "%s metadata --no-deps --format-version 1" cargo-transient-cargo-path))))
 
 (defun cargo-transient--packages-from-metadata (metadata)
   "Return the packages from the given METADATA."
