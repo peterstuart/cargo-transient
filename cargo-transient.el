@@ -83,22 +83,6 @@ It is equivalent to `project-compilation-buffer-name-function'."
   :group 'cargo-transient
   :type 'string)
 
-;; Group Names
-
-(eval-when-compile
-  (defconst cargo-transient--group-target-selection
-    "Target Selection")
-  (defconst cargo-transient--group-feature-selection
-    "Feature Selection")
-  (defconst cargo-transient--group-compilation-options
-    "Compilation Options")
-  (defconst cargo-transient--group-manifest-options
-    "Manifest Options")
-  (defconst cargo-transient--group-arguments
-    "Arguments")
-  (defconst cargo-transient--group-actions
-    "Actions"))
-
 ;; Utils
 
 (defun cargo-transient--completing-read (generate-collection)
@@ -134,7 +118,7 @@ GENERATE-COLLECTION is a function which returns a list of strings."
 (transient-define-prefix cargo-transient--prefix-build ()
   "Run `cargo build'."
   :man-page "cargo-build"
-  [cargo-transient--group-target-selection
+  ["Target Selection"
    (cargo-transient--arg-all-targets)
    (cargo-transient--arg-bin)
    (cargo-transient--arg-bins)
@@ -143,15 +127,15 @@ GENERATE-COLLECTION is a function which returns a list of strings."
    (cargo-transient--arg-lib)
    (cargo-transient--arg-test)
    (cargo-transient--arg-tests)]
-  [cargo-transient--group-feature-selection
+  ["Feature Selection"
    (cargo-transient--arg-features)
    (cargo-transient--arg-all-features)
    (cargo-transient--arg-no-default-features)]
-  [cargo-transient--group-compilation-options
+  ["Compilation Options"
    (cargo-transient--arg-release)]
-  [7 cargo-transient--group-manifest-options
+  ["Manifest Options"
    (cargo-transient--arg-offline)]
-  [cargo-transient--group-actions
+  ["Actions"
    ("b" "Build" cargo-transient-build)])
 
 (defun cargo-transient-build (&rest args)
@@ -162,7 +146,7 @@ GENERATE-COLLECTION is a function which returns a list of strings."
 (transient-define-prefix cargo-transient--prefix-check ()
   "Run `cargo check'."
   :man-page "cargo-check"
-  [cargo-transient--group-target-selection
+  ["Target Seleciton"
    (cargo-transient--arg-all-targets)
    (cargo-transient--arg-bin)
    (cargo-transient--arg-bins)
@@ -171,15 +155,15 @@ GENERATE-COLLECTION is a function which returns a list of strings."
    (cargo-transient--arg-lib)
    (cargo-transient--arg-test)
    (cargo-transient--arg-tests)]
-  [cargo-transient--group-feature-selection
+  ["Feature Selection"
    (cargo-transient--arg-features)
    (cargo-transient--arg-all-features)
    (cargo-transient--arg-no-default-features)]
-  [cargo-transient--group-compilation-options
+  ["Compilation Options"
    (cargo-transient--arg-release)]
-  [7 cargo-transient--group-manifest-options
+  ["Manifest Options"
    (cargo-transient--arg-offline)]
-  [cargo-transient--group-actions
+  ["Actions"
    ("c" "Check" cargo-transient-check)])
 
 (defun cargo-transient-check (&rest args)
@@ -197,9 +181,9 @@ GENERATE-COLLECTION is a function which returns a list of strings."
    (cargo-transient--arg-release
     :description "Release artifacts"
     :key "-r")]
-  [7 cargo-transient--group-manifest-options
+  ["Manifest Options"
    (cargo-transient--arg-offline)]
-  [cargo-transient--group-actions
+  ["Actions"
    ("k" "Clean" cargo-transient-clean)])
 
 (defun cargo-transient-clean (&rest args)
@@ -213,11 +197,11 @@ GENERATE-COLLECTION is a function which returns a list of strings."
    ("-n"
     "Run Clippy only on the given crate, without linting the dependencies"
     "--no-deps")]
-  [cargo-transient--group-feature-selection
+  ["Feature Selection"
    (cargo-transient--arg-features)
    (cargo-transient--arg-all-features)
    (cargo-transient--arg-no-default-features)]
-  [cargo-transient--group-target-selection
+  ["Target Selection"
    (cargo-transient--arg-all-targets)
    (cargo-transient--arg-bin)
    (cargo-transient--arg-bins)
@@ -226,11 +210,11 @@ GENERATE-COLLECTION is a function which returns a list of strings."
    (cargo-transient--arg-lib)
    (cargo-transient--arg-test)
    (cargo-transient--arg-tests)]
-  [cargo-transient--group-compilation-options
+  ["Compilation Options"
    (cargo-transient--arg-release)]
-  [7 cargo-transient--group-manifest-options
+  ["Manifest Options"
    (cargo-transient--arg-offline)]
-  [cargo-transient--group-actions
+  ["Actions"
    ("l" "Clippy" cargo-transient-clippy)
    ("f" "Fix" cargo-transient-clippy-fix)
    ("F" "Fix all" cargo-transient-clippy-fix-all)])
@@ -260,21 +244,21 @@ GENERATE-COLLECTION is a function which returns a list of strings."
    ("-p"
     "Include non-public items in the documentation"
     "--document-private-items")]
-  [cargo-transient--group-target-selection
+  ["Target Selection"
    (cargo-transient--arg-bin)
    (cargo-transient--arg-bins)
    (cargo-transient--arg-example)
    (cargo-transient--arg-examples)
    (cargo-transient--arg-lib)]
-  [cargo-transient--group-feature-selection
+  ["Feature Selection"
    (cargo-transient--arg-features)
    (cargo-transient--arg-all-features)
    (cargo-transient--arg-no-default-features)]
-  [cargo-transient--group-compilation-options
+  ["Compilation Options"
    (cargo-transient--arg-release)]
-  [7 cargo-transient--group-manifest-options
+  ["Manifest Options"
    (cargo-transient--arg-offline)]
-  [cargo-transient--group-actions
+  ["Actions"
    ("d" "Doc" cargo-transient-doc)
    ("o" "Open" cargo-transient-doc-open)])
 
@@ -296,21 +280,21 @@ GENERATE-COLLECTION is a function which returns a list of strings."
 (transient-define-prefix cargo-transient--prefix-run ()
   "Run `cargo run`."
   :man-page "cargo-run"
-  [cargo-transient--group-target-selection
+  ["Target Selection"
    (cargo-transient--arg-bin)
    (cargo-transient--arg-example)]
-  [cargo-transient--group-feature-selection
+  ["Feature Selection"
    (cargo-transient--arg-features)
    (cargo-transient--arg-all-features)
    (cargo-transient--arg-no-default-features)]
-  [cargo-transient--group-compilation-options
+  ["Compilation Options"
    (cargo-transient--arg-release)]
-  [7 cargo-transient--group-manifest-options
+  ["Manifest Options"
    (cargo-transient--arg-offline)]
-  [cargo-transient--group-arguments
+  ["Arguments"
    (cargo-transient--arg-arguments
     :description "Arguments to the binary")]
-  [cargo-transient--group-actions
+  ["Actions"
    ("r" "Run" cargo-transient-run)])
 
 (defun cargo-transient-run (&rest args)
@@ -332,7 +316,7 @@ GENERATE-COLLECTION is a function which returns a list of strings."
    ("-a"
     "Run all tests regardless of failure."
     "--no-fail-fast")]
-  [cargo-transient--group-target-selection
+  ["Target Selection"
    (cargo-transient--arg-bin)
    (cargo-transient--arg-bins)
    (cargo-transient--arg-doc)
@@ -341,15 +325,15 @@ GENERATE-COLLECTION is a function which returns a list of strings."
    (cargo-transient--arg-lib)
    (cargo-transient--arg-test)
    (cargo-transient--arg-tests)]
-  [cargo-transient--group-feature-selection
+  ["Feature Selection"
    (cargo-transient--arg-features)
    (cargo-transient--arg-all-features)
    (cargo-transient--arg-no-default-features)]
-  [cargo-transient--group-compilation-options
+  ["Compilation Options"
    (cargo-transient--arg-release)]
-  [7 cargo-transient--group-manifest-options
+  ["Manifest Options"
    (cargo-transient--arg-offline)]
-  [cargo-transient--group-actions
+  ["Actions"
    ("t" "Test" cargo-transient-test)])
 
 (defun cargo-transient-test (&rest args)
