@@ -477,6 +477,18 @@ arguments."
         pre-args
       (append pre-args '("--") post-args))))
 
+(defun cargo-transient--workspace-root ()
+  "Return the workspace root directory for the project at `default-directory'.
+Falls back to `default-directory' if it cannot be determined."
+  (let* ((output (string-trim
+                  (shell-command-to-string
+                   (format "%s locate-project --workspace --message-format=plain 2>/dev/null"
+                           cargo-transient-cargo-path))))
+         (manifest (unless (string-empty-p output) output)))
+    (if manifest
+        (file-name-directory manifest)
+      default-directory)))
+
 (defun cargo-transient--args ()
   "Return a list of arguments from the current transient command."
   (let ((args (flatten-list (transient-args transient-current-command))))
@@ -488,8 +500,7 @@ arguments."
          (command           (format "%s %s %s" cargo-transient-cargo-path command cargo-args))
          (compilation-buffer-name-function (or cargo-transient-compilation-buffer-name-function
                                                compilation-buffer-name-function))
-         (default-directory (or (locate-dominating-file default-directory "Cargo.toml")
-                                default-directory)))
+         (default-directory (cargo-transient--workspace-root)))
     (compile command)))
 
 (defun cargo-transient--metadata ()
