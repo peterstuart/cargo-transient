@@ -277,9 +277,13 @@ Ignores dirty or staged status."
   (cargo-transient--exec "doc --open" args))
 
 (defun cargo-transient-fmt ()
-  "Run `cargo fmt'."
+  "Run `cargo fmt' from the current crate's root.
+`cargo fmt' selects formatting targets relative to the current
+directory, so invoking it from e.g. a crate's `src' directory in a
+multi-crate workspace can fail with \"Failed to find targets\"."
   (interactive)
-  (cargo-transient--exec "fmt"))
+  (let ((default-directory (cargo-transient--crate-root)))
+    (cargo-transient--exec "fmt")))
 
 (transient-define-prefix cargo-transient--prefix-run ()
   "Run `cargo run'."
@@ -477,14 +481,29 @@ arguments."
         pre-args
       (append pre-args '("--") post-args))))
 
+(defun cargo-transient--locate-project (&optional workspace)
+  "Return the path to the nearest Cargo.toml from `default-directory'.
+If WORKSPACE is non-nil, return the workspace's Cargo.toml instead.
+Return nil if Cargo cannot locate a manifest."
+  (let ((output (string-trim
+                 (shell-command-to-string
+                  (format "%s locate-project %s--message-format=plain 2>/dev/null"
+                          cargo-transient-cargo-path
+                          (if workspace "--workspace " ""))))))
+    (unless (string-empty-p output) output)))
+
 (defun cargo-transient--workspace-root ()
   "Return the workspace root directory for the project at `default-directory'.
 Falls back to `default-directory' if it cannot be determined."
-  (let* ((output (string-trim
-                  (shell-command-to-string
-                   (format "%s locate-project --workspace --message-format=plain 2>/dev/null"
-                           cargo-transient-cargo-path))))
-         (manifest (unless (string-empty-p output) output)))
+  (let ((manifest (cargo-transient--locate-project t)))
+    (if manifest
+        (file-name-directory manifest)
+      default-directory)))
+
+(defun cargo-transient--crate-root ()
+  "Return the crate root directory for the project at `default-directory'.
+Falls back to `default-directory' if it cannot be determined."
+  (let ((manifest (cargo-transient--locate-project)))
     (if manifest
         (file-name-directory manifest)
       default-directory)))
